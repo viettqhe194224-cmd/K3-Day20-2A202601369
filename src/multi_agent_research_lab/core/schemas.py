@@ -17,7 +17,7 @@ class AgentName(StrEnum):
 class ResearchQuery(BaseModel):
     query: str = Field(..., min_length=5)
     max_sources: int = Field(default=5, ge=1, le=20)
-    audience: str = "technical learners"
+    audience: str = "người học kỹ thuật"
 
 
 class AgentResult(BaseModel):

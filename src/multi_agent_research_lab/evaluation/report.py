@@ -4,10 +4,7 @@ from multi_agent_research_lab.core.schemas import BenchmarkMetrics
 
 
 def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
-    """Render benchmark metrics to markdown.
-
-    TODO(student): Add richer analysis, examples, screenshots, and trace links.
-    """
+    """Render comparable metrics plus limitations and failure-analysis prompts."""
 
     lines = [
         "# Benchmark Report",
@@ -24,4 +21,18 @@ def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
             f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | {quality} "
             f"| {citation} | {failure} | {item.notes} |"
         )
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            "Quality is a reproducible length/citation heuristic, not a human or LLM judge. "
+            "Compare it with peer review before drawing conclusions.",
+            "",
+            "## Failure modes",
+            "",
+            "Inspect failed runs for provider errors, weak/missing search evidence, invalid "
+            "citations, and max-iteration termination. Correlate these with the workflow trace.",
+        ]
+    )
     return "\n".join(lines) + "\n"

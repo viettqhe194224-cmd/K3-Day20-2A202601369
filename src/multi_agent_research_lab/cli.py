@@ -1,5 +1,6 @@
 """Command-line entrypoint for the lab starter."""
 
+import os
 from typing import Annotated
 
 import typer
@@ -13,6 +14,7 @@ from multi_agent_research_lab.core.schemas import ResearchQuery
 from multi_agent_research_lab.core.state import ResearchState
 from multi_agent_research_lab.graph.workflow import MultiAgentWorkflow
 from multi_agent_research_lab.observability.logging import configure_logging
+from multi_agent_research_lab.services.llm_client import LLMClient
 
 app = typer.Typer(help="Multi-Agent Research Lab starter CLI")
 console = Console()
@@ -21,6 +23,10 @@ console = Console()
 def _init() -> None:
     settings = get_settings()
     configure_logging(settings.log_level)
+    os.environ["LANGSMITH_TRACING"] = str(settings.langsmith_tracing).lower()
+    if settings.langsmith_tracing and settings.langsmith_api_key:
+        os.environ["LANGSMITH_API_KEY"] = settings.langsmith_api_key
+        os.environ["LANGSMITH_PROJECT"] = settings.langsmith_project
 
 
 def _parse_query(query: str) -> ResearchQuery:
@@ -41,16 +47,24 @@ def _parse_query(query: str) -> ResearchQuery:
 def baseline(
     query: Annotated[str, typer.Option("--query", "-q", help="Research query")],
 ) -> None:
-    """Run a minimal single-agent baseline placeholder."""
+    """Run a single end-to-end LLM call."""
 
     _init()
     request = _parse_query(query)
-    state = ResearchState(request=request)
-    state.final_answer = (
-        "Baseline skeleton response. TODO(student): replace this with a real single-agent "
-        "implementation and record latency/cost/quality metrics."
+    response = LLMClient().complete(
+        "Bạn là trợ lý nghiên cứu cẩn trọng. Hãy trả lời bằng tiếng Việt, đi thẳng vào vấn đề, "
+        "nêu rõ điều chưa chắc chắn và không bịa nguồn hoặc citation. Giữ nguyên tên riêng và "
+        "thuật ngữ tiếng Anh quan trọng.",
+        request.query,
     )
-    console.print(Panel.fit(state.final_answer, title="Single-Agent Baseline"))
+    console.print(Panel.fit(response.content, title="Single-Agent Baseline"))
+    console.print(
+        {
+            "latency_seconds": response.latency_seconds,
+            "input_tokens": response.input_tokens,
+            "output_tokens": response.output_tokens,
+        }
+    )
 
 
 @app.command("multi-agent")

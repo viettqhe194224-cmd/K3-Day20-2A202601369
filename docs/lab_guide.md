@@ -115,3 +115,12 @@ Mỗi nhóm trả lời 2 câu:
 
 1. Case nào nên dùng multi-agent? Vì sao?
 2. Case nào không nên dùng multi-agent? Vì sao?
+
+### Câu trả lời exit ticket
+
+1. Nên dùng multi-agent khi bài toán có các giai đoạn thật sự khác nhau (thu thập bằng
+   chứng, đánh giá, tổng hợp), cần quan sát từng handoff, hoặc cần guardrail độc lập.
+   Tách vai trò giúp debug và đánh giá từng giai đoạn.
+2. Không nên dùng cho câu hỏi đơn giản, latency/cost nhạy cảm, hoặc khi một prompt và
+   một tool call đã giải quyết đủ tốt. Thêm agent làm tăng token, điểm lỗi và chi phí
+   phối hợp mà không tạo thêm giá trị.

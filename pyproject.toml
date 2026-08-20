@@ -33,6 +33,10 @@ dev = [
   "mypy>=1.10",
   "pre-commit>=3.7"
 ]
+ui = [
+  "streamlit>=1.37",
+  "numpy<2.5"
+]
 
 [project.scripts]
 malab = "multi_agent_research_lab.cli:app"
